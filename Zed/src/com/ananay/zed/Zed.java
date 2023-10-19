@@ -25,47 +25,49 @@ public class Zed {
             runPrompt();
         }
     }
-}
+    private static void runFile(String path) throws IOException{
+        // reading all the contents of the files as binary array
+        byte[] bytes = Files.readAllBytes(Paths.get(path));
+        // converting the read bytes to string
+        String fileContent=new String (bytes, Charset.defaultCharset());
+        run(fileContent);
+        if(hadError)System.exit(65);
 
+    }
+    private static void runPrompt() throws IOException{
 
-private static void runFile(String path) throws IOException{
-    // reading all the contents of the files as binary array
-    byte[] bytes = Files.readAllBytes(Paths.get(path));
-    // converting the read bytes to string
-    String fileContent=new String (bytes, Charset.defaultCharset());
-    run(fileContent);
-    if(hadError)System.exit(65);
+        BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
 
-}
-
-private static void runPrompt() throws IOException{
-
-    BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
-
-    while(true){
-        System.out.println(">>>");
-        String line = reader.readLine();
-        if(line==null){
-            break;
+        while(true){
+            System.out.println(">>>");
+            String line = reader.readLine();
+            if(line==null){
+                break;
+            }
+            run(line);
+            hadError=false;
         }
-        run(line);
-        hadError=false;
     }
-}
-
-private static void run(String source){
-    Scanner scanner = new Scanner(source);
-    List<Token> tokens= scanner.scanTokens;
-    for(Token token:tokens){
-        System.out.println(token);
+    private static void run(String source){
+        Scanner scanner = new Scanner(source);
+        List<Token> tokens= scanner.scanTokens;
+        for(Token token:tokens){
+            System.out.println(token);
+        }
     }
+    static void error(int line, String message){
+        report(line, " ", message);
+    }
+    private static void report(int line, String where, String message){
+        System.err.println("[line " + line + "] Error" + where + ": " + message));
+        hadError=true;
+    }
+
 }
 
-static void error(int line, String message){
-    report(line, " ", message);
-}
 
-private static void report(int line, String where, String message){
-    System.err.println("[line " + line + "] Error" + where + ": " + message));
-    hadError=true;
-}
+
+
+
+
+
